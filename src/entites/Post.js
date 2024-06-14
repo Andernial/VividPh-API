@@ -1,12 +1,11 @@
 import { connection } from "../database/connect.js";
 
-const createUsersTable = () => {
+const createPostsTable = () => {
     const query = `
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE IF NOT EXISTS posts (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(100) NOT NULL,
-        password VARCHAR(100) NOT NULL,
+        title VARCHAR(100) NOT NULL,
+        urlYoutube VARCHAR(100) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
@@ -14,10 +13,10 @@ const createUsersTable = () => {
   
     connection.query(query, (err, results) => {
       if (err) {
-        console.error('Erro ao criar tabela users:', err.message);
+        console.error('Erro ao criar tabela posts:', err.message);
         return;
       }
     });
   };
   
-  export default createUsersTable;
+  export default createPostsTable;
