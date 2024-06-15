@@ -6,7 +6,9 @@ const createPostsTable = () => {
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(100) NOT NULL,
         urlYoutube VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `;
