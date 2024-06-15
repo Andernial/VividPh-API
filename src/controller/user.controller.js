@@ -10,7 +10,7 @@ const userController = {
       if (err) {
         return res.status(500).send('Erro ao criar usuário');
       }
-      res.status(201).json({ results })
+      res.status(201).json({  message: 'Usuário criado com sucesso!' })
     })
   },
 
@@ -20,7 +20,7 @@ const userController = {
       if (err) {
         return res.status(400).send('Erro ao buscar usuários')
       }
-      res.status(200).json({ message: 'Usuário criado com sucesso!' })
+      res.status(200).json({results})
     })
   },
 
