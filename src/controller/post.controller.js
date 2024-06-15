@@ -58,7 +58,7 @@ const postController = {
         if (err) {
           return res.status(400).send(err)
         }
-        res.status(200).json({ results })
+        res.status(200).json({ message: "post deletado com sucesso!" })
       })
   },
 
