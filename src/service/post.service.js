@@ -134,6 +134,157 @@ class PostService {
 
   }
 
+  static UpdatePostService(postId, title, youtubeUrl, callback) {
+    createUsersTable()
+    createPostsTable()
+    createImagesTable()
+    createPostsImagesTable()
+
+    const postExists = `
+    SELECT 
+        p.id AS post_id,
+        p.title AS post_title,
+        p.urlYoutube AS post_youtube_url,
+        i.id AS image_id,
+        i.publicId AS image_public_id,
+        i.url AS image_url
+    FROM 
+        posts p
+        JOIN posts_images pi ON p.id = pi.post_id
+        JOIN images i ON pi.image_id = i.id
+    WHERE 
+        p.id = ?
+`;
+
+    connection.query(postExists, [postId], (err, results) => {
+      if (err) {
+        return callback(err);
+      }
+
+      if (results.length === 0) {
+        return callback(new Error("Post não encontrado"));
+      }
+
+      let fieldsToUpdate = [];
+      let values = [];
+
+      if (title) {
+        fieldsToUpdate.push('title = ?');
+        values.push(title);
+      }
+      if (youtubeUrl) {
+        fieldsToUpdate.push('urlYoutube = ?');
+        values.push(youtubeUrl);
+      }
+
+      values.push(postId);
+
+      const query = `UPDATE posts SET ${fieldsToUpdate.join(', ')} WHERE id = ?`;
+
+      connection.query(query, values, (err, results) => {
+        if (err) {
+          return callback(err);
+        }
+
+        connection.query(postExists, [postId], (err, updatedResults) => {
+          if (err) {
+            return callback(err)
+          }
+
+          const updatedPost = {
+            id: updatedResults[0].post_id,
+            title: updatedResults[0].post_title,
+            urlYoutube: updatedResults[0].post_youtube_url,
+            image: {
+                id: updatedResults[0].image_id,
+                publicId: updatedResults[0].image_public_id,
+                url: updatedResults[0].image_url
+            }
+        };
+
+          callback(null, updatedPost)
+        })
+
+
+
+      });
+    });
+  }
+
+  static UpdatePostImage(postId, newImageId, callback) {
+    createUsersTable()
+    createPostsTable()
+    createImagesTable()
+    createPostsImagesTable()
+    const selectQuery = `SELECT image_id FROM posts_images WHERE post_id = ?`;
+
+    connection.query(selectQuery, [postId], (err, results) => {
+      if (err) {
+        return callback(err);
+      }
+
+      if (results.length === 0) {
+        return callback(new Error("Nenhuma imagem encontrada para este post."));
+      }
+
+      const oldImageId = results[0].image_id;
+
+      const deleteQuery = `DELETE FROM posts_images WHERE post_id = ?`;
+
+      connection.query(deleteQuery, [postId], (err, deleteResults) => {
+        if (err) {
+          return callback(err);
+        }
+
+        const deleteImageQuery = `DELETE FROM images WHERE id = ?`;
+
+        connection.query(deleteImageQuery, [oldImageId], (err, deleteImageResults) => {
+          if (err) {
+            return callback(err);
+          }
+
+          const insertQuery = `INSERT INTO posts_images (post_id, image_id) VALUES (?, ?)`;
+
+          connection.query(insertQuery, [postId, newImageId], (err, insertResults) => {
+            if (err) {
+              return callback(err);
+            }
+
+            callback(null, newImageId);
+          });
+        });
+      });
+    });
+  }
+
+  static DeletePostService(postId, callback) {
+    createUsersTable()
+    createPostsTable()
+    createImagesTable()
+    createPostsImagesTable()
+
+    const postExists = 'SELECT * FROM posts WHERE id = ?';
+
+    connection.query(postExists, [postId], (err, results) => {
+      if (err) {
+        return callback(err);
+      }
+
+      if (results.length === 0) {
+        return callback(new Error("Usuário não encontrado"));
+      }
+
+      const query = "DELETE FROM posts WHERE id = ?";
+
+      connection.query(query, [postId], (err, results) => {
+        if (err) {
+          return callback(err);
+        }
+        callback(null, results);
+      });
+    });
+  }
+
 }
 
 export default PostService
