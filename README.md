@@ -32,6 +32,12 @@ const corsOptions = {
     optionsSuccessStatus: 200     
   }
 ```
+
+
+## Arquivo com rotas de testes pré prontas para o insomnia 🧪
+*Insomnia Routes VividPh V1* pode ser encontrado na pasta raiz do projeto (mesma pasta que o package json).
+Para utilizar as rotas de teste basta importar a collection para seu insomnia.
+
 ## Endpoints 📫
 
 ## Usuário 
