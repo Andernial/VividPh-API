@@ -10,18 +10,18 @@ const userController = {
       if (err) {
         return res.status(500).send('Erro ao criar usuário');
       }
-      res.status(201).json({ results });
-    });
+      res.status(201).json({ results })
+    })
   },
 
   showAllUser: (req, res) => {
 
     UserService.GetAllUserService((err, results) => {
       if (err) {
-        return res.status(400).send('Erro ao buscar usuários');
+        return res.status(400).send('Erro ao buscar usuários')
       }
-      res.status(201).json({ results });
-    });
+      res.status(200).json({ results })
+    })
   },
 
   updateUser: (req, res) => {
@@ -33,10 +33,10 @@ const userController = {
 
       UserService.UpdateUserService(id,name,password,email, (err, results) => {
         if (err) {
-          return res.status(400).json({message: err.message});
+          return res.status(400).json({message: err.message})
         }
-        res.status(201).json({ results });
-      });
+        res.status(200).json({ results })
+      })
   },
 
   deleteUser: (req, res) => {
@@ -45,10 +45,10 @@ const userController = {
 
       UserService.DeleteUserService(id, (err, results) => {
         if (err) {
-          return res.status(400).send(err);
+          return res.status(400).send(err)
         }
-        res.status(201).json({ results });
-      });
+        res.status(200).json({ results })
+      })
   },
 
 

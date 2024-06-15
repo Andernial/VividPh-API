@@ -2,9 +2,10 @@ import createImagesTable from "../entites/Image.js";
 import createPostsTable from "../entites/Post.js";
 import createPostsImagesTable from "../entites/Posts_Images.js";
 import { connection } from "../database/connect.js";
+import createUsersTable from "../entites/User.js";
 
 class PostService {
-  static CreatePostService(userId,imageId, title, youtubeUrl, callback) {
+  static CreatePostService(userId, imageId, title, youtubeUrl, callback) {
     createPostsTable()
     createPostsImagesTable()
 
@@ -20,7 +21,7 @@ class PostService {
     WHERE p.id = ?
   `;
     connection.query(query, [userId, title, youtubeUrl], (err, results) => {
-  
+
       if (err) {
         return callback(err)
       }
@@ -31,25 +32,25 @@ class PostService {
         if (err) {
           return callback(err)
         }
-          connection.query(selectPostQuery,[insertedId], (err,results)=>{
-            if(err){
-              return callback(err)
-            }
+        connection.query(selectPostQuery, [insertedId], (err, results) => {
+          if (err) {
+            return callback(err)
+          }
 
-            const post = {
-              id: results[0].id,
-              title: results[0].title,
-              urlYoutube: results[0].urlYoutube,
-              user_name: results[0].user_name,
-              images: results.map(row => ({
-                image_id: row.image_id,
-                public_id: row.publicId,
-                url: row.url
-              }))
-            };
+          const post = {
+            id: results[0].id,
+            title: results[0].title,
+            urlYoutube: results[0].urlYoutube,
+            user_name: results[0].user_name,
+            images: results.map(row => ({
+              image_id: row.image_id,
+              public_id: row.publicId,
+              url: row.url
+            }))
+          };
 
-            callback(null, post)
-          })
+          callback(null, post)
+        })
       })
 
     })
@@ -58,7 +59,7 @@ class PostService {
   static CreateImageService(url, publicId, callback) {
     createImagesTable()
 
-   
+
     connection.beginTransaction(err => {
       if (err) {
         return callback(err)
@@ -98,6 +99,39 @@ class PostService {
         })
       })
     })
+  }
+
+  static GetAllPostService(callback) {
+    createUsersTable()
+    createPostsTable()
+    createImagesTable()
+    createPostsImagesTable()
+
+    const query = `SELECT 
+    p.id AS post_id,
+    p.title AS post_title,
+    p.urlYoutube AS post_youtube_url,
+    i.id AS image_id,
+    i.publicId AS image_public_id,
+    i.url AS image_url,
+    u.name AS user_name
+    FROM 
+    posts p
+    JOIN posts_images pi ON p.id = pi.post_id
+    JOIN images i ON pi.image_id = i.id
+    JOIN users u ON p.user_id = u.id;`;
+    connection.query(query, (err, results) => {
+      if (err) {
+        return callback(err)
+      }
+
+      if (results.length === 0) {
+        return callback(new Error("Nenhum post encontrado"));
+      }
+
+      callback(null, results)
+    })
+
   }
 
 }

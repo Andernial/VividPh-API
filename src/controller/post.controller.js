@@ -9,18 +9,26 @@ const postController = {
     console.log(userId,'funciona no controller')
     PostService.CreateImageService(url, publicId, (err, results) => {
       if (err) {
-        return res.status(500).send('Erro ao criar imagem');
+        return res.status(400).send('Erro ao criar imagem');
       }
       PostService.CreatePostService(userId,results.id, title, youtubeUrl, (err, results) => {
         if (err) {
-          return res.status(500).send(err);
+          return res.status(400).send(err)
         }
-        res.status(201).json({ results });
+        res.status(200).json({ results })
       })
     })
   },
 
+  showAllPost: (req,res) =>{
+    PostService.GetAllPostService((err,results)=> {
+      if(err){
+        return res.status(400).json(err.message)
+      }
+       res.status(200).json({ results })
 
+    })
+  }
 }
 
 export default postController
