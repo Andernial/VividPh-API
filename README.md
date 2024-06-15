@@ -43,11 +43,14 @@ const corsOptions = {
 - **Descrição**: Cria um novo usuário no banco de dados.
 
 #### Parâmetros de Requisição
+```json
 {
 	"name":"usuario",
 	"email":"email",
 	"password":"564654"
 }
+```
+
 
 
 #### Resposta
@@ -123,7 +126,6 @@ const corsOptions = {
 #### Exemplo de Requisição
 
 ```json
-----
 ```
 
 #### Resposta
@@ -144,13 +146,14 @@ const corsOptions = {
 - **Descrição**: Cria um novo post no banco de dados.
 
 #### Parâmetros de Requisição
+```json
 {
 	"title":"titulo",
 	"youtubeUrl":"urlexample",
 	"publicId":"idPublicoCloudnaryImage",
 	"url":"exampleCloudinaryImageUrl"
 }
-
+```
 
 #### Resposta
 
@@ -241,7 +244,6 @@ const corsOptions = {
 #### Exemplo de Requisição
 
 ```json
-----
 ```
 
 #### Resposta
