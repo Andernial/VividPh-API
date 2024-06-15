@@ -24,7 +24,7 @@ DB_PASSWORD = 'senha do banco mysql (se tiver)'
 DATABASE= 'nome do banco'
 ```
 
-Configure o cors para consumir a api de outras origens : 
+Configure o cors para consumir a api de outras origens (a configuração default permite de todos os lugares) : 
 ```
 const corsOptions = {
     origin: 'url', 
