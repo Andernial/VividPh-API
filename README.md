@@ -8,7 +8,7 @@ Atualmente nem todas as verificações de dados foram implementadas.
 Verificação JWT ainda será adicionada.
 
 ## Tecnologias utilizadas 👾
-node, express, cors, nodemon. 
+node, express, cors, nodemon e mysql. 
 
 ## Atualização mais Recente ➡️
 
