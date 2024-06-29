@@ -8,7 +8,7 @@ Atualmente nem todas as verificações de dados foram implementadas.
 Verificação JWT ainda será adicionada.
 
 ## Tecnologias utilizadas 👾
-node, express, cors, nodemon. 
+node, express, cors, nodemon e mysql. 
 
 ## Atualização mais Recente ➡️
 
@@ -262,7 +262,7 @@ Para utilizar as rotas de teste basta importar a collection para seu insomnia.
 ```
 
 
-## Para Utilizar o Front Exemplo 🖥️
+## Para Utilizar o Front 🖥️
 Versão 1 do front ainda está em desenvolvimento 🛠️
 https://github.com/Andernial/VividPh
 
