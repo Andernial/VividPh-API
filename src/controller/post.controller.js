@@ -4,7 +4,7 @@ import PostService from "../service/post.service.js";
 
 const postController = {
   createPost: (req, res) => {
-    const { userId } = req.params
+    const userId = req.userid
     const { url, publicId, youtubeUrl, title } = req.body
     console.log(userId,'funciona no controller')
     PostService.CreateImageService(url, publicId, (err, results) => {
@@ -22,6 +22,17 @@ const postController = {
 
   showAllPost: (req,res) =>{
     PostService.GetAllPostService((err,results)=> {
+      if(err){
+        return res.status(400).json(err.message)
+      }
+       res.status(200).json({ results })
+
+    })
+  },
+
+  showAllUserPosts: (req,res) =>{
+     const {username} = req.params
+    PostService.ShowUserPosts(username,(err,results)=> {
       if(err){
         return res.status(400).json(err.message)
       }

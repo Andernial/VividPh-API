@@ -134,6 +134,47 @@ class PostService {
 
   }
 
+  static ShowUserPosts(username,callback) {
+    createUsersTable()
+    createPostsTable()
+    createImagesTable()
+    createPostsImagesTable()
+
+    const query = `
+  SELECT 
+    p.id AS post_id,
+    p.title AS post_title,
+    p.urlYoutube AS post_youtube_url,
+    i.id AS image_id,
+    i.publicId AS image_public_id,
+    i.url AS image_url,
+    u.name AS user_name
+  FROM 
+    posts p
+    JOIN posts_images pi ON p.id = pi.post_id
+    JOIN images i ON pi.image_id = i.id
+    JOIN users u ON p.user_id = u.id
+  WHERE
+    u.name = ?;`;
+
+
+    connection.query(query,[username], (err, results) => {
+      if (err) {
+        return callback(err)
+      }
+
+      if (results.length === 0) {
+        return callback(new Error("Nenhum post encontrado"));
+      }
+
+      callback(null, results)
+    })
+
+  }
+
+
+
+
   static UpdatePostService(postId, title, youtubeUrl, callback) {
     createUsersTable()
     createPostsTable()

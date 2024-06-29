@@ -1,12 +1,15 @@
 import { Router } from "express";
 import userController from "../controller/user.controller.js";
+import verifyJwt from "../middlewares/verifyJwt.js";
+
 
 const UserRouter = Router()
 
-UserRouter.post('/create', userController.createUser)
+UserRouter.post('/create',userController.createUser)
 UserRouter.get('/show-all', userController.showAllUser)
-UserRouter.patch('/update/:id', userController.updateUser)
-UserRouter.delete('/delete/:id', userController.deleteUser)
+UserRouter.post('/login', userController.login)
+UserRouter.patch('/update/',verifyJwt, userController.updateUser)
+UserRouter.delete('/delete',verifyJwt, userController.deleteUser)
 
 
 export default UserRouter

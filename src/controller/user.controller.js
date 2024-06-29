@@ -1,7 +1,6 @@
 import UserService from "../service/user.service.js"
 
 
-
 const userController = {
   createUser: (req, res) => {
     const { name, email, password } = req.body
@@ -24,10 +23,26 @@ const userController = {
     })
   },
 
+  login: (req, res) => {
+    const { email, password } = req.body
+
+    if(!email||!password){
+      return res.status(400).json({erro:'dados faltando!'})
+    }
+
+    UserService.Login(email,password,(err, results) => {
+      if (err) {
+        return res.status(400).json({err})
+      }
+      res.status(200).json({results})
+    })
+  },
+
+
   updateUser: (req, res) => {
-    const { id } = req.params
+    const  id  = req.userid
     const { name, password, email } = req.body
-    console.log(id)
+
 
     if (!name && !password && !email){return res.status(400).json({message: 'Nenhum valor a ser alterado'})}
 
@@ -40,8 +55,8 @@ const userController = {
   },
 
   deleteUser: (req, res) => {
-    const { id } = req.params
-    console.log(id)
+    const  id  = req.userid
+
 
       UserService.DeleteUserService(id, (err, results) => {
         if (err) {

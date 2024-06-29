@@ -1,5 +1,8 @@
 import { connection } from "../database/connect.js";
 import createUsersTable from "../entites/User.js";
+import jwt from 'jsonwebtoken'
+import { SECRET } from "../middlewares/verifyJwt.js";
+
 
 class UserService {
   static CreateUserService(name, email, password, callback) {
@@ -40,6 +43,42 @@ class UserService {
 
   }
 
+  static Login(email, password, callback) {
+    // Certifique-se de que a tabela de usuários está criada antes de executar a consulta
+    createUsersTable();
+
+    const query = 'SELECT * FROM users WHERE email = ? AND password = ?';
+
+    connection.query(query, [email, password], (err, results) => {
+      if (err) {
+        return callback(err);
+      }
+
+      if (results.length === 0) {
+        return callback(new Error('Usuário não encontrado'));
+      }
+
+      const userExists = results[0];
+
+      const token = jwt.sign(
+        { userid: userExists.id, role: 'user' },
+        SECRET,
+        { expiresIn: '10h' }
+      );
+
+      const object = {
+        token: token,
+        name: userExists.name,
+        email: userExists.email,
+        id: userExists.id,
+        auth: true
+      };
+
+      callback(null, object);
+    });
+  }
+
+
   static UpdateUserService(id, name, password, email, callback) {
     createUsersTable();
 
@@ -78,15 +117,15 @@ class UserService {
         if (err) {
           return callback(err);
         }
-        
-        connection.query(userExists, [id], (err,updatedResults) =>{
-          if(err){
+
+        connection.query(userExists, [id], (err, updatedResults) => {
+          if (err) {
             return callback(err)
           }
-          callback(null,updatedResults[0])
+          callback(null, updatedResults[0])
         })
 
-        
+
 
       });
     });

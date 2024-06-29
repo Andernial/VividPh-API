@@ -11,6 +11,7 @@ const database = process.env.DATABASE
 export const connection = mysql.createConnection({
   host: host,
   user: user,
+  password,
   database: database
 })
 
