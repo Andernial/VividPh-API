@@ -42,32 +42,54 @@ const postController = {
   },
 
   updatePost: (req, res) => {
-    const { postId } = req.params
-    const { url, publicId,title,youtubeUrl} = req.body
-    PostService.CreateImageService(url, publicId, (err, results) => {
+    const  userId = req.userid;
+    const { postId } = req.params;
+    const { url, publicId, title, youtubeUrl } = req.body;
+  
+    // Verifica se o post existe
+    PostService.SearchPost(userId, postId, (err, post) => {
       if (err) {
-        return res.status(400).send('Erro ao criar imagem');
+        return res.status(400).json({err});
       }
-      PostService.UpdatePostImage(postId, results.id, (err, results) => {
+  
+      if (!post) {
+        return res.status(404).send('Post não encontrado');
+      }
+  
+      // Cria a imagem
+      PostService.CreateImageService(url, publicId, (err, imageResult) => {
         if (err) {
-          return res.status(400).send(err)
+          return res.status(400).send('Erro ao criar imagem');
         }
-        PostService.UpdatePostService(postId,title,youtubeUrl, (err,results) => {
+  
+        // Atualiza a imagem do post
+        PostService.UpdatePostImage(postId, imageResult.id, (err, imageUpdateResult) => {
           if (err) {
-            return res.status(400).send(err)
+            return res.status(400).send('Erro ao atualizar imagem do post');
           }
-          res.status(200).json({ results })
-        })
-      })
-    })
+  
+          // Atualiza os dados do post
+          PostService.UpdatePostService(postId, title, youtubeUrl, (err, postUpdateResult) => {
+            if (err) {
+              return res.status(400).send('Erro ao atualizar post');
+            }
+  
+            res.status(200).json({ postUpdateResult });
+          });
+        });
+      });
+    });
   },
 
   deletePostService: (req, res) => {
+    const userid = req.userid
     const { postId } = req.params
 
-      PostService.DeletePostService(postId, (err, results) => {
+  
+
+      PostService.DeletePostService(userid,postId, (err, results) => {
         if (err) {
-          return res.status(400).send(err)
+          return res.status(400).json(err.message)
         }
         res.status(200).json({ message: "post deletado com sucesso!" })
       })

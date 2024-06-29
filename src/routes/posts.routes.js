@@ -8,8 +8,8 @@ const PostRouter = Router()
 PostRouter.post('/create/',verifyJwt, postController.createPost)
 PostRouter.get('/show-all', postController.showAllPost)
 PostRouter.get('/showUser-post/:username', postController.showAllUserPosts)
-PostRouter.patch('/update/:postId', postController.updatePost)
-PostRouter.delete('/delete/:postId', postController.deletePostService)
+PostRouter.patch('/update/:postId',verifyJwt, postController.updatePost)
+PostRouter.delete('/delete/:postId',verifyJwt, postController.deletePostService)
 
 
 

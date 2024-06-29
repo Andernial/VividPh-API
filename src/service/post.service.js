@@ -134,7 +134,7 @@ class PostService {
 
   }
 
-  static ShowUserPosts(username,callback) {
+  static ShowUserPosts(username, callback) {
     createUsersTable()
     createPostsTable()
     createImagesTable()
@@ -158,7 +158,7 @@ class PostService {
     u.name = ?;`;
 
 
-    connection.query(query,[username], (err, results) => {
+    connection.query(query, [username], (err, results) => {
       if (err) {
         return callback(err)
       }
@@ -171,6 +171,45 @@ class PostService {
     })
 
   }
+
+  static SearchPost(userId, postId, callback) {
+    createUsersTable();
+    createPostsTable();
+    createImagesTable();
+    createPostsImagesTable();
+
+    const query = `
+        SELECT 
+            p.id AS post_id,
+            p.title AS post_title,
+            p.urlYoutube AS post_youtube_url,
+            i.id AS image_id,
+            i.publicId AS image_public_id,
+            i.url AS image_url,
+            u.name AS user_name
+        FROM 
+            posts p
+            JOIN posts_images pi ON p.id = pi.post_id
+            JOIN images i ON pi.image_id = i.id
+            JOIN users u ON p.user_id = u.id
+        WHERE
+            p.user_id = ? AND
+            p.id = ?;`;
+
+    connection.query(query, [userId, postId], (err, results) => {
+      if (err) {
+        return callback(err);
+      }
+
+      if (results.length === 0) {
+        return callback(new Error("Nenhum post encontrado"));
+      }
+
+      callback(null, results);
+    });
+  }
+
+
 
 
 
@@ -237,11 +276,11 @@ class PostService {
             title: updatedResults[0].post_title,
             urlYoutube: updatedResults[0].post_youtube_url,
             image: {
-                id: updatedResults[0].image_id,
-                publicId: updatedResults[0].image_public_id,
-                url: updatedResults[0].image_url
+              id: updatedResults[0].image_id,
+              publicId: updatedResults[0].image_public_id,
+              url: updatedResults[0].image_url
             }
-        };
+          };
 
           callback(null, updatedPost)
         })
@@ -298,26 +337,34 @@ class PostService {
     });
   }
 
-  static DeletePostService(postId, callback) {
+  static DeletePostService(userid, postId, callback) {
     createUsersTable()
     createPostsTable()
     createImagesTable()
     createPostsImagesTable()
 
-    const postExists = 'SELECT * FROM posts WHERE id = ?';
+    const postExistsQuery = `
+  SELECT *
+  FROM posts
+  WHERE id = ? AND user_id = ?
+`;
 
-    connection.query(postExists, [postId], (err, results) => {
+    connection.query(postExistsQuery, [postId,userid], (err, results) => {
       if (err) {
         return callback(err);
       }
 
+
       if (results.length === 0) {
-        return callback(new Error("Usuário não encontrado"));
+        return callback(new Error("Post não encontrado"));
       }
 
-      const query = "DELETE FROM posts WHERE id = ?";
+      const query = `
+      DELETE FROM posts
+      WHERE id = ? AND user_id = ?
+      `;
 
-      connection.query(query, [postId], (err, results) => {
+      connection.query(query, [postId,userid], (err, results) => {
         if (err) {
           return callback(err);
         }
