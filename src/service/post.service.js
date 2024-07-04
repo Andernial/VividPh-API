@@ -353,6 +353,8 @@ class PostService {
       if (err) {
         return callback(err);
       }
+      
+      console.log(results, postId)
 
 
       if (results.length === 0) {

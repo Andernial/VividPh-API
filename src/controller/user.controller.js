@@ -5,9 +5,13 @@ const userController = {
   createUser: (req, res) => {
     const { name, email, password } = req.body
 
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+    }
+
     UserService.CreateUserService(name, email, password, (err, results) => {
       if (err) {
-        return res.status(500).send('Erro ao criar usuário');
+        return res.status(400).json(err.message);
       }
       res.status(201).json({  message: 'Usuário criado com sucesso!' })
     })
@@ -31,6 +35,22 @@ const userController = {
     }
 
     UserService.Login(email,password,(err, results) => {
+      if (err) {
+        return res.status(400).json({err})
+      }
+      res.status(200).json({results})
+    })
+  },
+
+  CreateProfilePic: (req, res) => {
+    const { imageId, imageUrl, } = req.body
+    const id = req.userid
+
+    if(!imageId||!imageUrl){
+      return res.status(400).json({erro:'dados faltando!'})
+    }
+
+    UserService.CreateProfilePicService(id,imageId,imageUrl,(err, results) => {
       if (err) {
         return res.status(400).json({err})
       }
